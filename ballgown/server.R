@@ -29,15 +29,15 @@ shinyServer(function(input, output) {
   bg <- reactive({
     inFile <- input$design_mtx
   #  if(input$design_mtx==0)
-     if(is.null(inFile))
-      return(NULL)
+     # if(is.null(inFile))
+     #  return(NULL)
     ctab_path <- input$ballgown_dir
   #  ctab_path
   #  browser()
     ctab_fdr <- basename(ctab_path)
     #ctab_fdr2 <- paste("/usr/local/apache2/htdocs/data/ballgown_shiny",ctab_fdr, sep= '/')
-    download(input$ballgown_dir,ctab_fdr,mode = "wb")
     #download(input$ballgown_dir,ctab_fdr,mode = "wb")
+    download(input$ballgown_dir,ctab_fdr,mode = "wb")
     #file_url <- "http://brie.cshl.edu/data/test.zip"
     #download(file_url,"ctest.zip",mode = "wb")
     unzip(zipfile=ctab_fdr,exdir = "./")
@@ -53,21 +53,15 @@ shinyServer(function(input, output) {
   
   pheno_data <- reactive({
     inFile <- input$design_mtx
-    #if(input$design_mtx==0)
     if(is.null(inFile))
       return(NULL)
     pheno_data <- read.table(inFile$datapath, header = TRUE, sep = "\t")
   })
- 
- # output$covOutput <- renderUI({
-  #  selectInput("covInput", "Covariate of interest",
-  #              sort(unique(colnames(pheno_data()))),
-  #              selected = "NA"
-   #             )
- # }) 
+
   output$phenoContent <- DT::renderDataTable({
     pheno_data()
   })
+  
   output$downloadSummary <- downloadHandler(
     filename = function() { "desgin_matrix.txt" },
     content = function(file) {
@@ -102,7 +96,7 @@ shinyServer(function(input, output) {
   saved_plots_and_tables$plot1 <- plotTranscripts(gene=input$gv_var_input, gown=bg(), samples=all_sample_list, meas=input$measInput, colorby=input$featureInput, labelTranscripts= TRUE)
  # ggsave("gene_view_plot.png",saved_plots_and_tables$plot1)
   })
- 
+
   output$downloadPlot1 <- downloadHandler(
     filename = function() {
       "gene_view_plot.png"
@@ -119,7 +113,7 @@ shinyServer(function(input, output) {
     saved_plots_and_tables$plot2 <- plotMeans(input$gv_var_input, bg(), groupvar=input$covariate, meas=input$measInput, colorby=input$featureInput, labelTranscripts= TRUE)
     saved_plots_and_tables$plot2
   })
-  
+
   output$downloadPlot2 <- downloadHandler(
     filename = function() {
       "gene_experiment_view_plot.png"
@@ -127,7 +121,7 @@ shinyServer(function(input, output) {
     content = function(file) {
       ggsave(saved_plots_and_tables$plot2)
     })
-  
+
   
 })
 
